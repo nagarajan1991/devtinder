@@ -1,19 +1,33 @@
 const express = require('express');
-
+const connectDB = require("./config/database");
 const app = express();
+const User = require("./models/user");
 
-app.use("/",(req,res) => {
-    res.send('Hello from the dashboard!');
-})
+app.use(express.json());
 
-app.use("/hello",(req,res) => {
-    res.send('Hello from the server!');
-})
+app.post("/signup", async(req,res) => {
+    const user = new User(req.body);
 
-app.use("/test",(req,res) => {
-    res.send('Test from the server!');
-})
-
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+    try {
+        await user.save();
+        res.send("User added successfully");
+    }
+    catch (err) {
+        res.status(400).send("Error saving the user: "+err);
+    }
 });
+
+
+connectDB()
+.then(() => {
+    console.log("Database connected");
+    app.listen(3000, () => {
+    console.log("Server running on port 3000");
+})
+})
+.catch((err) => {
+    console.log("Database connection failed");
+    console.log(err);
+    process.exit(1);
+}); 
+
