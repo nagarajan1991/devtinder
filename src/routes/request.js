@@ -46,9 +46,16 @@ requestRouter.post(
 
       const data = await connectionRequest.save();
 
+      // Improved message format
+      let message;
+      if (status === "interested") {
+        message = `Connection request sent to ${toUser.firstName} ${toUser.lastName}`;
+      } else {
+        message = `You've marked ${toUser.firstName} ${toUser.lastName} as not interested`;
+      }
+
       res.json({
-        message:
-          req.user.firstName + " is " + status + " in " + toUser.firstName,
+        message: message,
         data,
       });
     } catch (err) {
@@ -81,11 +88,22 @@ requestRouter.post(
           .json({ message: "Connection request not found" });
       }
 
+      // Get the sender's information for better message
+      const fromUser = await User.findById(connectionRequest.fromUserId);
+
       connectionRequest.status = status;
 
       const data = await connectionRequest.save();
 
-      res.json({ message: "Connection request " + status, data });
+      // Improved message format
+      let message;
+      if (status === "accepted") {
+        message = `Connection request from ${fromUser.firstName} ${fromUser.lastName} accepted successfully`;
+      } else {
+        message = `Connection request from ${fromUser.firstName} ${fromUser.lastName} declined`;
+      }
+
+      res.json({ message: message, data });
     } catch (err) {
       res.status(400).send("ERROR: " + err.message);
     }
