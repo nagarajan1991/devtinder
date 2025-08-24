@@ -5,6 +5,8 @@ const { userAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 
+const sendEmail = require("../utils/sendEmail");
+
 requestRouter.post(
   "/request/send/:status/:toUserId",
   userAuth,
@@ -46,16 +48,15 @@ requestRouter.post(
 
       const data = await connectionRequest.save();
 
-      // Improved message format
-      let message;
-      if (status === "interested") {
-        message = `Connection request sent to ${toUser.firstName} ${toUser.lastName}`;
-      } else {
-        message = `You've marked ${toUser.firstName} ${toUser.lastName} as not interested`;
-      }
+      const emailRes = await sendEmail.run(
+        "A new friend request from " + req.user.firstName,
+        req.user.firstName + " is " + status + " in " + toUser.firstName
+      );
+      console.log(emailRes);
 
       res.json({
-        message: message,
+        message:
+          req.user.firstName + " is " + status + " in " + toUser.firstName,
         data,
       });
     } catch (err) {
@@ -88,22 +89,11 @@ requestRouter.post(
           .json({ message: "Connection request not found" });
       }
 
-      // Get the sender's information for better message
-      const fromUser = await User.findById(connectionRequest.fromUserId);
-
       connectionRequest.status = status;
 
       const data = await connectionRequest.save();
 
-      // Improved message format
-      let message;
-      if (status === "accepted") {
-        message = `Connection request from ${fromUser.firstName} ${fromUser.lastName} accepted successfully`;
-      } else {
-        message = `Connection request from ${fromUser.firstName} ${fromUser.lastName} declined`;
-      }
-
-      res.json({ message: message, data });
+      res.json({ message: "Connection request " + status, data });
     } catch (err) {
       res.status(400).send("ERROR: " + err.message);
     }
