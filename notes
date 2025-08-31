@@ -1,0 +1,18 @@
+Frontend: React.js (UI layer)
+Backend: Node.js with Express (server-side logic, API handling)
+State Management: Redux (managing global state in frontend)
+Routing: React Router (handling navigation in frontend)
+HTTP Client: Axios (making API calls from frontend to backend)
+Development Server: Vite (frontend dev server running on port 5173)
+Backend Server: Express (backend server running on port 7777)
+
+
+~/devtinder-web$ git pull
+~/devtinder-web$ npm run build
+~/devtinder-web$ sudo scp -r ./dist/* /var/www/html/
+~/devtinder-web$  service nginx status
+~/devtinder$ pm2 start npm -- start
+~/devtinder$ pm2 list 
+~/devtinder$ pm2 log 
+~/devtinder$ pm2 restart 0 
+~/devtinder$ pm2 flush
