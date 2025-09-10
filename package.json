@@ -1,17 +1,20 @@
 {
-  "name": "devtinder",
+  "name": "social-network",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
+    "update-premium": "node src/scripts/updatePremiumUsers.js",
+    "check-membership": "node src/scripts/checkMembership.js",
+    "fix-membership": "node src/scripts/fixMembershipExpiry.js",
+    "verify-users": "node src/scripts/verifyExistingUsers.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "A social networking platform for connecting people and building relationships",
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.864.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -21,6 +24,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.1",
     "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.6",
     "razorpay": "^2.9.6",
     "socket.io": "^4.8.1",
     "validator": "^13.15.15"

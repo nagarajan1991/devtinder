@@ -57,14 +57,25 @@ const userSchema = new mongoose.Schema(
     },
     membershipType: {
       type: String,
+      enum: ["none", "silver", "gold"],
       default: "none",
+    },
+    membershipExpiry: {
+      type: Date,
+    },
+    dailyDecisionCount: {
+      type: Number,
+      default: 0,
+    },
+    lastDecisionDate: {
+      type: Date,
     },
     
     photoUrl: {
       type: String,
       default: "https://geographyandyou.com/images/user-profile.png",
       validate(value) {
-        if (!validator.isURL(value)) {
+        if (value && !validator.isURL(value)) {
           throw new Error("Invalid Photo URL: " + value);
         }
       },
@@ -75,6 +86,22 @@ const userSchema = new mongoose.Schema(
     },
     skills: {
       type: [String],
+    },
+    passwordResetToken: {
+      type: String,
+    },
+    passwordResetExpires: {
+      type: Date,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerificationToken: {
+      type: String,
+    },
+    emailVerificationExpires: {
+      type: Date,
     },
   },
   {

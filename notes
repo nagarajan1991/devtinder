@@ -7,15 +7,15 @@ Development Server: Vite (frontend dev server running on port 5173)
 Backend Server: Express (backend server running on port 7777)
 
 
-~/devtinder-web$ git pull
-~/devtinder-web$ npm run build
-~/devtinder-web$ sudo scp -r ./dist/* /var/www/html/
-~/devtinder-web$  service nginx status
-~/devtinder$ pm2 start npm -- start
-~/devtinder$ pm2 list 
-~/devtinder$ pm2 log 
-~/devtinder$ pm2 restart 0 
-~/devtinder$ pm2 flush
+~/social-network-web$ git pull
+~/social-network-web$ npm run build
+~/social-network-web$ sudo scp -r ./dist/* /var/www/html/
+~/social-network-web$  service nginx status
+~/social-network$ pm2 start npm -- start
+~/social-network$ pm2 list 
+~/social-network$ pm2 log 
+~/social-network$ pm2 restart 0 
+~/social-network$ pm2 flush
 
 nginx Config:
 sudo nano /etc/nginx/sites-available/default 

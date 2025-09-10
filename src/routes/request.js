@@ -5,7 +5,7 @@ const { userAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 
-const sendEmail = require("../utils/sendEmail");
+const { sendConnectionRequestEmail } = require("../utils/emailTemplates");
 
 requestRouter.post(
   "/request/send/:status/:toUserId",
@@ -15,6 +15,13 @@ requestRouter.post(
       const fromUserId = req.user._id;
       const toUserId = req.params.toUserId;
       const status = req.params.status;
+
+      // Check if user is trying to connect to themselves
+      if (fromUserId === toUserId) {
+        return res
+          .status(400)
+          .json({ message: "Cannot send connection request to yourself" });
+      }
 
       const allowedStatus = ["ignored", "interested"];
       if (!allowedStatus.includes(status)) {
@@ -48,11 +55,13 @@ requestRouter.post(
 
       const data = await connectionRequest.save();
 
-      const emailRes = await sendEmail.run(
-        "A new friend request from " + req.user.firstName,
-        req.user.firstName + " is " + status + " in " + toUser.firstName
-      );
-      console.log(emailRes);
+      // Send connection request email
+      try {
+        const emailRes = await sendConnectionRequestEmail(req.user, toUser, status);
+      } catch (emailErr) {
+        console.error("Failed to send connection request email:", emailErr);
+        // Don't fail the request if email fails
+      }
 
       res.json({
         message:
@@ -60,7 +69,8 @@ requestRouter.post(
         data,
       });
     } catch (err) {
-      res.status(400).send("ERROR: " + err.message);
+      console.error("Error in send request:", err);
+      res.status(400).json({ message: "ERROR: " + err.message });
     }
   }
 );

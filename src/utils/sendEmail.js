@@ -1,53 +1,27 @@
-const { SendEmailCommand } = require("@aws-sdk/client-ses");
-const { sesClient } = require("./sesClient.js");
+const { createGmailTransporter } = require("./gmailClient.js");
 
-const createSendEmailCommand = (toAddress, fromAddress, subject, body) => {
-  return new SendEmailCommand({
-    Destination: {
-      CcAddresses: [],
-      ToAddresses: [toAddress],
-    },
-    Message: {
-      Body: {
-        Html: {
-          Charset: "UTF-8",
-          Data: `<h1>${body}</h1>`,
-        },
-        Text: {
-          Charset: "UTF-8",
-          Data: "This is the text format email",
-        },
-      },
-      Subject: {
-        Charset: "UTF-8",
-        Data: subject,
-      },
-    },
-    Source: fromAddress,
-    ReplyToAddresses: [
-      /* more items */
-    ],
-  });
-};
-
-const run = async (subject, body, toEmailId) => {
-  const sendEmailCommand = createSendEmailCommand(
-    "nagarajan1991@gmail.com",
-    "support@nagadev.co.uk",
-    subject,
-    body
-  );
+const run = async (subject, htmlBody, toEmailId, fromAddress = process.env.GMAIL_USER, textBody = "") => {
+  const to = toEmailId || process.env.GMAIL_USER;
+  const from = fromAddress || process.env.GMAIL_USER;
+  
+  // Use Gmail instead of AWS SES
+  const transporter = createGmailTransporter();
+  
+  const mailOptions = {
+    from: from,
+    to: to,
+    subject: subject,
+    html: htmlBody,
+    text: textBody
+  };
 
   try {
-    return await sesClient.send(sendEmailCommand);
-  } catch (caught) {
-    if (caught instanceof Error && caught.name === "MessageRejected") {
-      const messageRejectedError = caught;
-      return messageRejectedError;
-    }
-    throw caught;
+    const result = await transporter.sendMail(mailOptions);
+    return result;
+  } catch (error) {
+    console.error('Error sending email:', error);
+    throw error;
   }
 };
 
-// snippet-end:[ses.JavaScript.email.sendEmailV3]
 module.exports = { run };

@@ -1,6 +1,6 @@
 const cron = require("node-cron");
 const { subDays, startOfDay, endOfDay } = require("date-fns");
-const sendEmail = require("./sendEmail");
+const { sendDailyDigestEmail } = require("./emailTemplates");
 const ConnectionRequestModel = require("../models/connectionRequest");
 
 // This job will run at 8 AM in the morning everyday
@@ -24,18 +24,26 @@ cron.schedule("0 8 * * *", async () => {
       ...new Set(pendingRequests.map((req) => req.toUserId.emailId)),
     ];
 
-    console.log(listOfEmails);
 
     for (const email of listOfEmails) {
-      // Send Emails
+      // Send Daily Digest Emails
       try {
-        const res = await sendEmail.run(
-          "New Friend Requests pending for " + email,
-          "Ther eare so many frined reuests pending, please login to DevTinder.in and accept or reject the reqyests."
-        );
-        console.log(res);
+        // Count pending requests for this user
+        const userPendingCount = pendingRequests.filter(req => req.toUserId.emailId === email).length;
+        
+        // Get recent connections for this user (last 7 days)
+        const recentConnections = await ConnectionRequestModel.find({
+          $or: [
+            { fromUserId: pendingRequests.find(req => req.toUserId.emailId === email)?.toUserId._id },
+            { toUserId: pendingRequests.find(req => req.toUserId.emailId === email)?.toUserId._id }
+          ],
+          status: "accepted",
+          updatedAt: { $gte: subDays(new Date(), 7) }
+        }).populate("fromUserId toUserId", "firstName lastName photoUrl");
+        
+        const res = await sendDailyDigestEmail(email, userPendingCount, recentConnections);
       } catch (err) {
-        console.log(err);
+        console.error(`Failed to send daily digest to ${email}:`, err);
       }
     }
   } catch (err) {
