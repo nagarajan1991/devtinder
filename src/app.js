@@ -10,6 +10,10 @@ require("dotenv").config();
 
 require("./utils/cronjob");
 
+// Trust proxy for production deployment behind Nginx
+// This allows Express to properly handle X-Forwarded-For headers
+app.set('trust proxy', true);
+
 app.use(
   cors({
     origin: ["http://localhost:5173", "https://nagadev.co.uk"],
