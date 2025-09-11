@@ -1,9 +1,20 @@
 const rateLimit = require('express-rate-limit');
 
-// General API rate limiter - 100 requests per 15 minutes
+// Helper function to check if request is from localhost
+const isLocalhost = (req) => {
+  return req.ip === '127.0.0.1' || 
+         req.ip === '::1' || 
+         req.ip === '::ffff:127.0.0.1' ||
+         req.hostname === 'localhost';
+};
+
+// General API rate limiter - More lenient for localhost
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: (req) => {
+    // More lenient limits for localhost development
+    return isLocalhost(req) ? 1000 : 100;
+  },
   message: {
     success: false,
     message: 'Too many requests from this IP, please try again later.'
@@ -19,10 +30,13 @@ const generalLimiter = rateLimit({
   }
 });
 
-// Login rate limiter - 5 attempts per 15 minutes
+// Login rate limiter - More lenient for localhost
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 login requests per windowMs
+  max: (req) => {
+    // More lenient limits for localhost development
+    return isLocalhost(req) ? 50 : 5;
+  },
   message: {
     success: false,
     message: 'Too many login attempts, please try again after 15 minutes.'
@@ -39,10 +53,13 @@ const loginLimiter = rateLimit({
   }
 });
 
-// Signup rate limiter - 3 attempts per hour
+// Signup rate limiter - More lenient for localhost
 const signupLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 3, // Limit each IP to 3 signup requests per hour
+  max: (req) => {
+    // More lenient limits for localhost development
+    return isLocalhost(req) ? 20 : 3;
+  },
   message: {
     success: false,
     message: 'Too many signup attempts, please try again after 1 hour.'
@@ -134,10 +151,13 @@ const chatLimiter = rateLimit({
   }
 });
 
-// Connection request rate limiter - 20 requests per hour
+// Connection request rate limiter - More lenient for localhost
 const connectionRequestLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 20, // Limit each IP to 20 connection requests per hour
+  max: (req) => {
+    // More lenient limits for localhost development
+    return isLocalhost(req) ? 200 : 20;
+  },
   message: {
     success: false,
     message: 'Too many connection requests, please try again after 1 hour.'

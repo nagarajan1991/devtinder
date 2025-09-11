@@ -9,6 +9,7 @@
     "check-membership": "node src/scripts/checkMembership.js",
     "fix-membership": "node src/scripts/fixMembershipExpiry.js",
     "verify-users": "node src/scripts/verifyExistingUsers.js",
+    "reset-limits": "node src/scripts/resetRateLimit.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
