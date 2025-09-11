@@ -9,8 +9,9 @@ const { sendPremiumUpgradeEmail } = require("../utils/emailTemplates");
 const {
   validateWebhookSignature,
 } = require("razorpay/dist/utils/razorpay-utils");
+const { paymentLimiter } = require("../middlewares/rateLimiter");
 
-paymentRouter.post("/payment/create", userAuth, async (req, res) => {
+paymentRouter.post("/payment/create", userAuth, paymentLimiter, async (req, res) => {
   try {
     const { membershipType } = req.body;
     const { firstName, lastName, emailId } = req.user;

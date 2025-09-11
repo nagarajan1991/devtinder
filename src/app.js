@@ -4,6 +4,7 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const http = require("http");
+const { generalLimiter } = require("./middlewares/rateLimiter");
 
 require("dotenv").config();
 
@@ -11,12 +12,15 @@ require("./utils/cronjob");
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://nagadev.co.uk"],
     credentials: true,
   })
 );
 app.use(express.json());
 app.use(cookieParser());
+
+// Apply general rate limiting to all API routes
+app.use("/api", generalLimiter);
 
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");

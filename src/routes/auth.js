@@ -8,8 +8,14 @@ const validator = require("validator");
 const { userAuth } = require("../middlewares/auth");
 const crypto = require("crypto");
 const { sendWelcomeEmail, sendPasswordResetEmail, sendEmailVerificationEmail } = require("../utils/emailTemplates");
+const { 
+  loginLimiter, 
+  signupLimiter, 
+  passwordResetLimiter, 
+  emailVerificationLimiter 
+} = require("../middlewares/rateLimiter");
 
-authRouter.post("/signup", async (req, res) => {
+authRouter.post("/signup", signupLimiter, async (req, res) => {
   try {
     // Validation of data
     validateSignUpData(req);
@@ -109,7 +115,7 @@ authRouter.post("/signup", async (req, res) => {
   }
 });
 
-authRouter.post("/login", async (req, res) => {
+authRouter.post("/login", loginLimiter, async (req, res) => {
   try {
     const { emailId, password } = req.body;
 
@@ -210,7 +216,7 @@ authRouter.post("/logout", async (req, res) => {
 });
 
 // Forgot password - send reset email
-authRouter.post("/forgot-password", async (req, res) => {
+authRouter.post("/forgot-password", passwordResetLimiter, async (req, res) => {
   try {
     const { emailId } = req.body;
 
@@ -346,7 +352,7 @@ authRouter.get("/verify-email", async (req, res) => {
 });
 
 // Resend verification email endpoint
-authRouter.post("/resend-verification", async (req, res) => {
+authRouter.post("/resend-verification", emailVerificationLimiter, async (req, res) => {
   try {
     const { emailId } = req.body;
 

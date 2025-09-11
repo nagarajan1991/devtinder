@@ -4,7 +4,8 @@ const { sendDailyDigestEmail } = require("./emailTemplates");
 const ConnectionRequestModel = require("../models/connectionRequest");
 
 // This job will run at 8 AM in the morning everyday
-cron.schedule("0 8 * * *", async () => {
+// DISABLED: Cron job temporarily disabled
+// cron.schedule("0 8 * * *", async () => {
   // Send emails to all people who got requests the previous day
   try {
     const yesterday = subDays(new Date(), 1);
@@ -49,4 +50,4 @@ cron.schedule("0 8 * * *", async () => {
   } catch (err) {
     console.error(err);
   }
-});
+// });

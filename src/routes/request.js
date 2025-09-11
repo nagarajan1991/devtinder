@@ -4,12 +4,14 @@ const requestRouter = express.Router();
 const { userAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
+const { connectionRequestLimiter } = require("../middlewares/rateLimiter");
 
 const { sendConnectionRequestEmail } = require("../utils/emailTemplates");
 
 requestRouter.post(
   "/request/send/:status/:toUserId",
   userAuth,
+  connectionRequestLimiter,
   async (req, res) => {
     try {
       const fromUserId = req.user._id;
