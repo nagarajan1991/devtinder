@@ -97,11 +97,15 @@ userRouter.get("/feed", userAuth, async (req, res) => {
         { _id: { $ne: loggedInUser._id } },
       ],
     })
-      .select(USER_SAFE_DATA)
-      .skip(skip)
-      .limit(limit);
+      .select(USER_SAFE_DATA);
 
-    res.json({ data: users });
+    // Shuffle the users array to show random order
+    const shuffledUsers = users.sort(() => Math.random() - 0.5);
+    
+    // Apply pagination after shuffling
+    const paginatedUsers = shuffledUsers.slice(skip, skip + limit);
+
+    res.json({ data: paginatedUsers });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
