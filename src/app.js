@@ -11,8 +11,8 @@ require("dotenv").config();
 require("./utils/cronjob");
 
 // Trust proxy for production deployment behind Nginx
-// This allows Express to properly handle X-Forwarded-For headers
-app.set('trust proxy', true);
+// Only trust the first proxy (Nginx) to prevent IP spoofing
+app.set('trust proxy', 1);
 
 app.use(
   cors({
