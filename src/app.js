@@ -35,7 +35,7 @@ const premiumRouter = require("./routes/premium");
 const { initializeSocket } = require("./utils/socket");
 const chatRouter = require("./routes/chat");
 
-app.use("/api", authRouter);
+app.use("/api/auth", authRouter);
 app.use("/api", profileRouter);
 app.use("/api", requestRouter);
 app.use("/api", userRouter);
