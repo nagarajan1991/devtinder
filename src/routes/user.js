@@ -9,6 +9,32 @@ const crypto = require("crypto");
 
 const USER_SAFE_DATA = "firstName lastName photoUrl age gender about skills";
 
+// Deterministic shuffle function using seed
+function deterministicShuffle(array, seed) {
+  // Create a simple hash from the seed
+  const hash = crypto.createHash('md5').update(seed).digest('hex');
+  const seedNum = parseInt(hash.substring(0, 8), 16);
+  
+  // Fisher-Yates shuffle with seeded random
+  const shuffled = [...array];
+  let currentIndex = shuffled.length;
+  
+  // Simple seeded random number generator
+  let randomSeed = seedNum;
+  function seededRandom() {
+    randomSeed = (randomSeed * 9301 + 49297) % 233280;
+    return randomSeed / 233280;
+  }
+  
+  while (currentIndex !== 0) {
+    const randomIndex = Math.floor(seededRandom() * currentIndex);
+    currentIndex--;
+    [shuffled[currentIndex], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[currentIndex]];
+  }
+  
+  return shuffled;
+}
+
 // Get another user's profile
 userRouter.get("/user/profile/:userId", userAuth, async (req, res) => {
   try {
@@ -99,8 +125,11 @@ userRouter.get("/feed", userAuth, async (req, res) => {
     })
       .select(USER_SAFE_DATA);
 
-    // Shuffle the users array to show random order
-    const shuffledUsers = users.sort(() => Math.random() - 0.5);
+    // Create deterministic shuffle based on user ID and date
+    // This ensures same order for same user within the same day, but different order for different users
+    // The feed refreshes daily but stays consistent throughout the day
+    const userSpecificSeed = loggedInUser._id.toString() + new Date().toDateString();
+    const shuffledUsers = deterministicShuffle(users, userSpecificSeed);
     
     // Apply pagination after shuffling
     const paginatedUsers = shuffledUsers.slice(skip, skip + limit);
