@@ -7,9 +7,8 @@ const userAuth = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({ message: "Please login!" });
     }
-
-    const decodedObj = await jwt.verify(token, process.env.JWT_SECRET);
-
+    
+    const decodedObj = await jwt.verify(token, "DEV@Tinder$790");
     const { _id } = decodedObj;
 
     const user = await User.findById(_id);
@@ -20,7 +19,7 @@ const userAuth = async (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
-    console.error("Auth middleware error:", err);
+    console.error("Auth middleware error:", err.message);
     res.status(401).json({ message: "Authentication failed: " + err.message });
   }
 };

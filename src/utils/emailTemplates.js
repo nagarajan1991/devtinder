@@ -2,7 +2,7 @@ const { run: sendEmail } = require("./sendEmail");
 
 // Base email template with consistent styling
 const getBaseTemplate = (title, content, ctaText = null, ctaUrl = null) => {
-  const webUrl = process.env.WEB_BASE_URL || "http://localhost:5173";
+  const webUrl = process.env.WEB_BASE_URL || "https://nagadev.co.uk";
   
   return `
     <!DOCTYPE html>
@@ -227,7 +227,7 @@ const getBaseTemplate = (title, content, ctaText = null, ctaUrl = null) => {
 
 // Welcome email template for new users
 const getWelcomeEmailTemplate = (userName) => {
-  const webUrl = process.env.WEB_BASE_URL || "http://localhost:5173";
+  const webUrl = process.env.WEB_BASE_URL || "https://nagadev.co.uk";
   
   const content = `
     <h2>Welcome to Social Network, ${userName}! 🎉</h2>
@@ -266,7 +266,7 @@ const getWelcomeEmailTemplate = (userName) => {
 
 // Connection request email template
 const getConnectionRequestTemplate = (fromUser, toUser, status) => {
-  const webUrl = process.env.WEB_BASE_URL || "http://localhost:5173";
+  const webUrl = process.env.WEB_BASE_URL || "https://nagadev.co.uk";
   const actionText = status === "interested" ? "wants to connect with you" : "has shown interest in your profile";
   
   const content = `
@@ -303,7 +303,7 @@ const getConnectionRequestTemplate = (fromUser, toUser, status) => {
 
 // Daily digest email template
 const getDailyDigestTemplate = (userEmail, pendingCount, recentConnections = []) => {
-  const webUrl = process.env.WEB_BASE_URL || "http://localhost:5173";
+  const webUrl = process.env.WEB_BASE_URL || "https://nagadev.co.uk";
   
   const content = `
     <h2>Your Social Network Daily Digest 📊</h2>
@@ -360,7 +360,7 @@ const getDailyDigestTemplate = (userEmail, pendingCount, recentConnections = [])
 
 // Premium upgrade email template
 const getPremiumUpgradeTemplate = (userName, membershipType) => {
-  const webUrl = process.env.WEB_BASE_URL || "http://localhost:5173";
+  const webUrl = process.env.WEB_BASE_URL || "https://nagadev.co.uk";
   
   const content = `
     <h2>Welcome to ${membershipType.charAt(0).toUpperCase() + membershipType.slice(1)} Membership! ⭐</h2>
@@ -400,7 +400,7 @@ const getPremiumUpgradeTemplate = (userName, membershipType) => {
 const sendWelcomeEmail = async (userEmail, userName) => {
   const subject = `Welcome to Social Network, ${userName}! 🎉`;
   const htmlBody = getWelcomeEmailTemplate(userName);
-  const textBody = `Welcome to Social Network, ${userName}! We're excited to have you join our community of people. Visit ${process.env.WEB_BASE_URL || "http://localhost:5173"} to get started.`;
+  const textBody = `Welcome to Social Network, ${userName}! We're excited to have you join our community of people. Visit ${process.env.WEB_BASE_URL || "https://nagadev.co.uk"} to get started.`;
   
   return await sendEmail(subject, htmlBody, userEmail, undefined, textBody);
 };
@@ -408,7 +408,7 @@ const sendWelcomeEmail = async (userEmail, userName) => {
 const sendConnectionRequestEmail = async (fromUser, toUser, status) => {
   const subject = `New Connection Request from ${fromUser.firstName} on Social Network `;
   const htmlBody = getConnectionRequestTemplate(fromUser, toUser, status);
-  const textBody = `${fromUser.firstName} ${status === "interested" ? "wants to connect with you" : "has shown interest in your profile"} on Social Network. Visit ${process.env.WEB_BASE_URL || "http://localhost:5173"}/connections to respond.`;
+  const textBody = `${fromUser.firstName} ${status === "interested" ? "wants to connect with you" : "has shown interest in your profile"} on Social Network. Visit ${process.env.WEB_BASE_URL || "https://nagadev.co.uk"}/connections to respond.`;
   
   return await sendEmail(subject, htmlBody, toUser.emailId, undefined, textBody);
 };
@@ -416,7 +416,7 @@ const sendConnectionRequestEmail = async (fromUser, toUser, status) => {
 const sendDailyDigestEmail = async (userEmail, pendingCount, recentConnections = []) => {
   const subject = `Your Social Network Daily Digest - ${pendingCount} pending request${pendingCount !== 1 ? 's' : ''}`;
   const htmlBody = getDailyDigestTemplate(userEmail, pendingCount, recentConnections);
-  const textBody = `Your Social Network Daily Digest: ${pendingCount} pending connection request${pendingCount !== 1 ? 's' : ''}. Visit ${process.env.WEB_BASE_URL || "http://localhost:5173"}/connections to review.`;
+  const textBody = `Your Social Network Daily Digest: ${pendingCount} pending connection request${pendingCount !== 1 ? 's' : ''}. Visit ${process.env.WEB_BASE_URL || "https://nagadev.co.uk"}/connections to review.`;
   
   return await sendEmail(subject, htmlBody, userEmail, undefined, textBody);
 };
@@ -431,7 +431,7 @@ const sendPremiumUpgradeEmail = async (userEmail, userName, membershipType) => {
 
 // Password reset email template
 const getPasswordResetTemplate = (userName, resetToken) => {
-  const webUrl = process.env.WEB_BASE_URL || "http://localhost:5173";
+  const webUrl = process.env.WEB_BASE_URL || "https://nagadev.co.uk";
   const resetUrl = `${webUrl}/reset-password?token=${resetToken}`;
   
   const content = `
@@ -477,14 +477,14 @@ const getPasswordResetTemplate = (userName, resetToken) => {
 const sendPasswordResetEmail = async (userEmail, userName, resetToken) => {
   const subject = "Reset Your Password - Social Network";
   const htmlBody = getPasswordResetTemplate(userName, resetToken);
-  const textBody = `Hi ${userName}, you requested a password reset for your Social Network account. Click this link to reset your password: ${process.env.WEB_BASE_URL || "http://localhost:5173"}/reset-password?token=${resetToken}. This link expires in 15 minutes.`;
+  const textBody = `Hi ${userName}, you requested a password reset for your Social Network account. Click this link to reset your password: ${process.env.WEB_BASE_URL || "https://nagadev.co.uk"}/reset-password?token=${resetToken}. This link expires in 15 minutes.`;
   
   return await sendEmail(subject, htmlBody, userEmail, undefined, textBody);
 };
 
 // Email Verification Template
 const getEmailVerificationTemplate = (userName, verificationToken) => {
-  const verificationUrl = `${process.env.WEB_BASE_URL || "http://localhost:5173"}/verify-email?token=${verificationToken}`;
+  const verificationUrl = `${process.env.WEB_BASE_URL || "https://nagadev.co.uk"}/verify-email?token=${verificationToken}`;
   
   const content = `
     <h2>Welcome to Social Network! 🎉</h2>
@@ -538,7 +538,7 @@ const getEmailVerificationTemplate = (userName, verificationToken) => {
 const sendEmailVerificationEmail = async (userEmail, userName, verificationToken) => {
   const subject = "Verify Your Email Address - Social Network";
   const htmlBody = getEmailVerificationTemplate(userName, verificationToken);
-  const textBody = `Hi ${userName}, welcome to Social Network! Please verify your email address by clicking this link: ${process.env.WEB_BASE_URL || "http://localhost:5173"}/verify-email?token=${verificationToken}. This link expires in 24 hours.`;
+  const textBody = `Hi ${userName}, welcome to Social Network! Please verify your email address by clicking this link: ${process.env.WEB_BASE_URL || "https://nagadev.co.uk"}/verify-email?token=${verificationToken}. This link expires in 24 hours.`;
   
   return await sendEmail(subject, htmlBody, userEmail, undefined, textBody);
 };

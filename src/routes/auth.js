@@ -135,7 +135,11 @@ authRouter.post("/login", loginLimiter, async (req, res) => {
       const token = await user.getJWT();
 
       res.cookie("token", token, {
-        expires: new Date(Date.now() + 8 * 3600000),
+        expires: new Date(Date.now() + 7 * 24 * 3600000), // 7 days to match JWT expiration
+        httpOnly: false,
+        secure: false,
+        sameSite: 'lax',
+        path: '/'
       });
       res.send(user);
     } else {
@@ -197,6 +201,14 @@ authRouter.patch("/change-password", userAuth, async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         emailId: user.emailId,
+        photoUrl: user.photoUrl,
+        age: user.age,
+        gender: user.gender,
+        about: user.about,
+        skills: user.skills,
+        isPremium: user.isPremium,
+        membershipType: user.membershipType,
+        membershipExpiry: user.membershipExpiry,
         updatedAt: user.updatedAt
       }
     });
@@ -211,6 +223,10 @@ authRouter.patch("/change-password", userAuth, async (req, res) => {
 authRouter.post("/logout", async (req, res) => {
   res.cookie("token", null, {
     expires: new Date(Date.now()),
+    httpOnly: false,
+    secure: false,
+    sameSite: 'lax',
+    path: '/'
   });
   res.send("Logout Successful!!");
 });
